@@ -24,6 +24,8 @@ jobs:
     name: Build Debug APK
     runs-on: ubuntu-latest
 
+    if: github.event.head_commit.message != 'chore(format)'
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

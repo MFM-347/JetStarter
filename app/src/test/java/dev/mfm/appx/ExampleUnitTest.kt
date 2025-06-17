@@ -1,4 +1,4 @@
-package com.example.appx
+package dev.mfm.appx
 
 import org.junit.Assert.*
 import org.junit.Test
