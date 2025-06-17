@@ -1,22 +1,6 @@
 name: Android Release CI
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '**/*.kt'
-      - '**/*.kts'
-      - '**/*.xml'
-      - '*.kts'
-      - 'gradle/libs.versions.toml'
-  pull_request:
-    paths:
-      - '**/*.kt'
-      - '**/*.kts'
-      - '**/*.xml'
-      - '*.kts'
-      - '.github/**/release.yml'
-      - 'gradle/libs.versions.toml'
   workflow_dispatch:
 
 jobs:
