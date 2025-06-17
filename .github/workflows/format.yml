@@ -1,0 +1,84 @@
+name: Format
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/*.kt'
+      - '**/*.kts'
+      - '**/*.xml'
+      - '**/*.json'
+      - '**/*.md'
+      - '.github/**/format.yml'
+      - 'gradle/libs.versions.toml'
+  pull_request:
+    paths:
+      - '**/*.kt'
+      - '**/*.kts'
+      - '**/*.xml'
+      - '**/*.json'
+      - '**/*.md'
+      - '.github/**/format.yml'
+      - 'gradle/libs.versions.toml'
+  workflow_dispatch:
+
+jobs:
+  format:
+    name: Format Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Prettier
+        run: |
+          npm install
+
+      - name: Format XML, JSON, and Markdown files
+        run: |
+          npm run format
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Format Kotlin (kt/kts) files
+        run: ./gradlew spotlessApply
+
+      - name: Clean up temporary files
+        run: |
+          rm -rf node_modules
+          rm -f package-lock.json
+
+      - name: Commit and push formatted files
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add .
+          git diff --cached --quiet || git commit -m "format"
+          git push

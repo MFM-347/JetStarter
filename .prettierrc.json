@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json.schemastore.org/prettierrc",
+  "singleAttributePerLine": true,
+  "plugins": ["@prettier/plugin-xml"]
+}
